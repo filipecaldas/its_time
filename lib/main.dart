@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:its_time/screens/dashboard.dart';
+import 'package:its_time/screens/to_do_form.dart';
 import 'package:its_time/screens/to_do_list.dart';
 
 void main() {
@@ -10,6 +11,6 @@ class ItsTimeApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: ToDoList());
+    return MaterialApp(home: ToDoForm());
   }
 }

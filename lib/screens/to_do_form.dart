@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ToDoForm extends StatefulWidget {
   @override
@@ -77,11 +78,31 @@ class _ToDoFormState extends State<ToDoForm> {
                     Row(
                       children: <Widget>[
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                minTime: DateTime.now(),
+                                maxTime: DateTime(2100, 1, 1),
+                                onChanged: (date) {
+                              print('change $date');
+                            }, onConfirm: (date) {
+                              print('confirm $date');
+                            },
+                                currentTime: DateTime.now(),
+                                locale: LocaleType.pt);
+                          },
                           child: Icon(Icons.date_range),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            DatePicker.showTimePicker(context,
+                                showTitleActions: true,
+                                showSecondsColumn: false, onChanged: (time) {
+                              print('change $time');
+                            }, onConfirm: (time) {
+                              print('confirm $time');
+                            }, locale: LocaleType.pt);
+                          },
                           child: Icon(Icons.access_time),
                         ),
                       ],
@@ -103,11 +124,31 @@ class _ToDoFormState extends State<ToDoForm> {
                       child: Row(
                         children: <Widget>[
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              DatePicker.showDatePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime.now(),
+                                  maxTime: DateTime(2100, 1, 1),
+                                  onChanged: (date) {
+                                print('change $date');
+                              }, onConfirm: (date) {
+                                print('confirm $date');
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.pt);
+                            },
                             child: Icon(Icons.date_range),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              DatePicker.showTimePicker(context,
+                                  showTitleActions: true,
+                                  showSecondsColumn: false, onChanged: (time) {
+                                print('change $time');
+                              }, onConfirm: (time) {
+                                print('confirm $time');
+                              }, locale: LocaleType.pt);
+                            },
                             child: Icon(Icons.access_time),
                           ),
                         ],

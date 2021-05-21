@@ -11,13 +11,32 @@ class _ToDoFormState extends State<ToDoForm> {
   bool isSwitchedRepeat = false;
   bool isSwitchedAlarm = false;
 
+  int selectedRadio = 0;
+
+  bool isCheckedSunday = false;
+  bool isCheckedMonday = false;
+  bool isCheckedTuesday = false;
+  bool isCheckedWednesday = false;
+  bool isCheckedThursday = false;
+  bool isCheckedFriday = false;
+  bool isCheckedSaturday = false;
+
+  isSelectedWeekly(int value) {
+    if (value == 2) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("It's Time!"),
-        ),
-        body: Column(
+      appBar: AppBar(
+        title: Text("It's Time!"),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
             TextField(
               decoration: InputDecoration(
@@ -110,6 +129,170 @@ class _ToDoFormState extends State<ToDoForm> {
                       offstage: !isSwitchedRepeat,
                       child: Column(
                         children: <Widget>[
+                          RadioListTile(
+                            title: Text("diariamente"),
+                            value: 1,
+                            groupValue: selectedRadio,
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  selectedRadio = value;
+                                },
+                              );
+                            },
+                          ),
+                          Column(
+                            children: <Widget>[
+                              RadioListTile(
+                                title: Text("semanalmente"),
+                                value: 2,
+                                groupValue: selectedRadio,
+                                onChanged: (value) {
+                                  setState(
+                                    () {
+                                      selectedRadio = value;
+                                    },
+                                  );
+                                },
+                              ),
+                              Offstage(
+                                offstage: isSelectedWeekly(selectedRadio),
+                                child: Row(
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedSunday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedSunday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Domingo")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedMonday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedMonday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Segunda")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedTuesday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedTuesday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Terça")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedWednesday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedWednesday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Quarta")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedThursday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedThursday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Quinta")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedFriday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedFriday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Sexta")
+                                      ],
+                                    ),
+                                    Column(
+                                      children: <Widget>[
+                                        Checkbox(
+                                          value: isCheckedSaturday,
+                                          onChanged: (value) {
+                                            setState(
+                                              () {
+                                                isCheckedSaturday = value;
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Text("Sábado")
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              RadioListTile(
+                                title: Text("mensalmente"),
+                                value: 3,
+                                groupValue: selectedRadio,
+                                onChanged: (value) {
+                                  setState(
+                                    () {
+                                      selectedRadio = value;
+                                    },
+                                  );
+                                },
+                              ),
+                              RadioListTile(
+                                title: Text("anualmente"),
+                                value: 4,
+                                groupValue: selectedRadio,
+                                onChanged: (value) {
+                                  setState(
+                                    () {
+                                      selectedRadio = value;
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                           //repetição diária
                           //repetição semanal
                           //repetição mensal
@@ -134,6 +317,8 @@ class _ToDoFormState extends State<ToDoForm> {
               ),
             ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

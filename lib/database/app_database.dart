@@ -7,7 +7,7 @@ Future<Database> getDatabase() async {
   return openDatabase(path, onCreate: (db, version) {
     db.execute('CREATE TABLE ticket('
         'id INTEGER PRIMARY KEY,'
-        'color TEXT,'
+        'color INTEGER,'
         'name TEXT'
         ')');
     db.execute('CREATE TABLE todo('

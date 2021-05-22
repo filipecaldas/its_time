@@ -1,7 +1,7 @@
 class Ticket {
   int id;
   String name;
-  String color;
+  int color;
 
   Ticket({this.id, this.name, this.color});
 }

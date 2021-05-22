@@ -22,6 +22,12 @@ class _ToDoFormState extends State<ToDoForm> {
   bool isCheckedFriday = false;
   bool isCheckedSaturday = false;
 
+  String strDateAlarm = "";
+  String strTimeAlarm = "";
+
+  String strDatePrevious = "";
+  String strTimePrevious = "";
+
   isSelectedWeekly(int value) {
     if (value == 2) {
       return false;
@@ -83,28 +89,36 @@ class _ToDoFormState extends State<ToDoForm> {
                                 showTitleActions: true,
                                 minTime: DateTime.now(),
                                 maxTime: DateTime(2100, 1, 1),
-                                onChanged: (date) {
-                              print('change $date');
-                            }, onConfirm: (date) {
-                              print('confirm $date');
+                                onConfirm: (date) {
+                              setState(() {
+                                strDateAlarm = date.day.toString() +
+                                    "/" +
+                                    date.month.toString() +
+                                    "/" +
+                                    date.year.toString();
+                              });
                             },
                                 currentTime: DateTime.now(),
                                 locale: LocaleType.pt);
                           },
                           child: Icon(Icons.date_range),
                         ),
+                        Text(strDateAlarm),
                         TextButton(
                           onPressed: () {
                             DatePicker.showTimePicker(context,
                                 showTitleActions: true,
-                                showSecondsColumn: false, onChanged: (time) {
-                              print('change $time');
-                            }, onConfirm: (time) {
-                              print('confirm $time');
+                                showSecondsColumn: false, onConfirm: (time) {
+                              setState(() {
+                                strTimeAlarm = time.hour.toString() +
+                                    ":" +
+                                    time.minute.toString();
+                              });
                             }, locale: LocaleType.pt);
                           },
                           child: Icon(Icons.access_time),
                         ),
+                        Text(strTimeAlarm),
                       ],
                     ),
                     Row(
@@ -129,28 +143,36 @@ class _ToDoFormState extends State<ToDoForm> {
                                   showTitleActions: true,
                                   minTime: DateTime.now(),
                                   maxTime: DateTime(2100, 1, 1),
-                                  onChanged: (date) {
-                                print('change $date');
-                              }, onConfirm: (date) {
-                                print('confirm $date');
+                                  onConfirm: (date) {
+                                setState(() {
+                                  strDatePrevious = date.day.toString() +
+                                      "/" +
+                                      date.month.toString() +
+                                      "/" +
+                                      date.year.toString();
+                                });
                               },
                                   currentTime: DateTime.now(),
                                   locale: LocaleType.pt);
                             },
                             child: Icon(Icons.date_range),
                           ),
+                          Text(strDatePrevious),
                           TextButton(
                             onPressed: () {
                               DatePicker.showTimePicker(context,
                                   showTitleActions: true,
-                                  showSecondsColumn: false, onChanged: (time) {
-                                print('change $time');
-                              }, onConfirm: (time) {
-                                print('confirm $time');
+                                  showSecondsColumn: false, onConfirm: (time) {
+                                setState(() {
+                                  strTimePrevious = time.hour.toString() +
+                                      ":" +
+                                      time.minute.toString();
+                                });
                               }, locale: LocaleType.pt);
                             },
                             child: Icon(Icons.access_time),
                           ),
+                          Text(strTimePrevious),
                         ],
                       ),
                     ),

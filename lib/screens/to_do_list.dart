@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:its_time/models/ToDo.dart';
 
 class ToDoList extends StatelessWidget {
-  final List<ToDo> list = [
-    ToDo(false, "Tarefa 1"),
-    ToDo(true, "Tarefa 2"),
-    ToDo(false, "Tarefa 3"),
-  ];
+  final List<ToDo> list = [];
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +21,7 @@ class ToDoList extends StatelessWidget {
       body: ListView.builder(
         itemCount: list.length,
         itemBuilder: (context, index) {
-          return ToDoWidget(list[index].isChecked, list[index].description);
+          return ToDoWidget(list[index].conclusion, list[index].description);
         },
       ),
     );

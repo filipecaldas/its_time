@@ -3,7 +3,12 @@ import 'package:its_time/database/dao/ticket_dao.dart';
 import 'package:its_time/models/Ticket.dart';
 import 'package:its_time/screens/ticket_form.dart';
 
-class TicketList extends StatelessWidget {
+class TicketList extends StatefulWidget {
+  @override
+  _TicketListState createState() => _TicketListState();
+}
+
+class _TicketListState extends State<TicketList> {
   final TicketDao _ticketDao = TicketDao();
   List<Color> colors = [
     Colors.green,
@@ -21,11 +26,13 @@ class TicketList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => TicketForm(),
-            ),
-          );
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => TicketForm(),
+                ),
+              )
+              .then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
       ),
@@ -60,7 +67,13 @@ class TicketList extends StatelessWidget {
                       width: 32.0,
                       height: 32.0,
                       child: Center(
-                        child: Text(tickets[index].name),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(tickets[index].name),
+                          ],
+                        ),
                       ),
                     ),
                   ),

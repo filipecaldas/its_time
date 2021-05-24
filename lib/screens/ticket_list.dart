@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:its_time/database/dao/ticket_dao.dart';
 import 'package:its_time/models/Ticket.dart';
 import 'package:its_time/screens/ticket_form.dart';
+import 'package:its_time/screens/to_do_list.dart';
 
 class TicketList extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _TicketListState extends State<TicketList> {
         child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<Ticket>>(
-          initialData: [],
+          initialData: List.empty(),
           future: _ticketDao.findAll(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
@@ -60,19 +61,28 @@ class _TicketListState extends State<TicketList> {
                 return GridView.count(
                   crossAxisCount: 2,
                   children: List.generate(
-                    tickets.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.all(10.0),
-                      color: colors[tickets[index].color],
-                      width: 32.0,
-                      height: 32.0,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(tickets[index].name),
-                          ],
+                    snapshot.data.length,
+                    (index) => GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ToDoList(tickets[index].id)),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(10.0),
+                        color: colors[tickets[index].color],
+                        width: 32.0,
+                        height: 32.0,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(tickets[index].name),
+                            ],
+                          ),
                         ),
                       ),
                     ),

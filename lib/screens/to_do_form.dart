@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:its_time/database/dao/to_do_dao.dart';
+import 'package:its_time/models/ToDo.dart';
 
 class ToDoForm extends StatefulWidget {
+  final int idTicket;
+
+  ToDoForm(this.idTicket);
   @override
   _ToDoFormState createState() => _ToDoFormState();
 }
 
 class _ToDoFormState extends State<ToDoForm> {
+  final ToDoDao _toDoDao = ToDoDao();
+
   bool isSwitchedAlert = false;
   bool isSwitchedPrevious = false;
   bool isSwitchedRepeat = false;
@@ -22,18 +29,61 @@ class _ToDoFormState extends State<ToDoForm> {
   bool isCheckedFriday = false;
   bool isCheckedSaturday = false;
 
-  String strDateAlarm = "";
-  String strTimeAlarm = "";
+  String strDateAlart = "";
+  String strTimeAlart = "";
 
   String strDatePrevious = "";
   String strTimePrevious = "";
 
-  isSelectedWeekly(int value) {
+  final TextEditingController _controllerTitle = TextEditingController();
+  final TextEditingController _controllerDescription = TextEditingController();
+
+  bool isSelectedWeekly(int value) {
     if (value == 2) {
       return false;
     } else {
       return true;
     }
+  }
+
+  String transformStrWeekly() {
+    String str = '';
+    if (isCheckedSunday) {
+      str += 'sun,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedMonday) {
+      str += 'mon,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedTuesday) {
+      str += 'tue,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedWednesday) {
+      str += 'wed,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedThursday) {
+      str += 'thu,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedFriday) {
+      str += 'fri,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedSaturday) {
+      str += 'sat,';
+    } else {
+      str += ',';
+    }
+    return str;
   }
 
   @override
@@ -42,10 +92,40 @@ class _ToDoFormState extends State<ToDoForm> {
       appBar: AppBar(
         title: Text("It's Time!"),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final String title = _controllerTitle.text;
+          final String description = _controllerDescription.text;
+          print(title);
+          print(description);
+
+          final String strWeekly = transformStrWeekly();
+
+          final ToDo newToDo = ToDo(
+              title: title,
+              description: description,
+              conclusion: false,
+              alert: isSwitchedAlert,
+              alertDate: strDateAlart,
+              alertTime: strTimeAlart,
+              previous: isSwitchedPrevious,
+              previousDate: strDatePrevious,
+              previousTime: strTimePrevious,
+              repeat: selectedRadio,
+              repeatWeekly: strWeekly,
+              alarm: isSwitchedAlarm,
+              idTicket: widget.idTicket);
+          _toDoDao.create(newToDo).then((id) => {
+                Navigator.pop(context),
+              });
+        },
+        child: const Icon(Icons.check),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             TextField(
+              controller: _controllerTitle,
               decoration: InputDecoration(
                 labelText: 'Tarefa',
               ),
@@ -54,6 +134,7 @@ class _ToDoFormState extends State<ToDoForm> {
               ),
             ),
             TextField(
+              controller: _controllerDescription,
               decoration: InputDecoration(
                 labelText: 'Notas',
               ),
@@ -91,7 +172,7 @@ class _ToDoFormState extends State<ToDoForm> {
           child: Container(
             child: Column(
               children: <Widget>[
-                buttonsDateTimeAlert(),
+                buttonsDateTimeAlert(context),
                 Row(
                   children: <Widget>[
                     Switch(
@@ -106,7 +187,7 @@ class _ToDoFormState extends State<ToDoForm> {
                 ),
                 Offstage(
                   offstage: !isSwitchedPrevious,
-                  child: buttonsDateTimePrevious(),
+                  child: buttonsDateTimePrevious(context),
                 ),
                 Row(
                   children: <Widget>[
@@ -122,7 +203,7 @@ class _ToDoFormState extends State<ToDoForm> {
                 ),
                 Offstage(
                   offstage: !isSwitchedRepeat,
-                  child: buttonsRadioListRepeat(),
+                  child: buttonsRadioListRepeat(context),
                 ),
                 Row(
                   children: <Widget>[
@@ -144,7 +225,7 @@ class _ToDoFormState extends State<ToDoForm> {
     );
   }
 
-  buttonsDateTimeAlert() {
+  Widget buttonsDateTimeAlert(BuildContext context) {
     return Row(
       children: <Widget>[
         TextButton(
@@ -154,7 +235,7 @@ class _ToDoFormState extends State<ToDoForm> {
                 minTime: DateTime.now(),
                 maxTime: DateTime(2100, 1, 1), onConfirm: (date) {
               setState(() {
-                strDateAlarm = date.day.toString() +
+                strDateAlart = date.day.toString() +
                     "/" +
                     date.month.toString() +
                     "/" +
@@ -164,26 +245,26 @@ class _ToDoFormState extends State<ToDoForm> {
           },
           child: Icon(Icons.date_range),
         ),
-        Text(strDateAlarm),
+        Text(strDateAlart),
         TextButton(
           onPressed: () {
             DatePicker.showTimePicker(context,
                 showTitleActions: true,
                 showSecondsColumn: false, onConfirm: (time) {
               setState(() {
-                strTimeAlarm =
+                strTimeAlart =
                     time.hour.toString() + ":" + time.minute.toString();
               });
             }, locale: LocaleType.pt);
           },
           child: Icon(Icons.access_time),
         ),
-        Text(strTimeAlarm),
+        Text(strTimeAlart),
       ],
     );
   }
 
-  buttonsDateTimePrevious() {
+  Widget buttonsDateTimePrevious(BuildContext context) {
     return Row(
       children: <Widget>[
         TextButton(
@@ -222,7 +303,7 @@ class _ToDoFormState extends State<ToDoForm> {
     );
   }
 
-  buttonsRadioListRepeat() {
+  Widget buttonsRadioListRepeat(BuildContext context) {
     return Column(
       children: <Widget>[
         RadioListTile(

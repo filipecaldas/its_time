@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:its_time/database/dao/to_do_dao.dart';
 import 'package:its_time/models/ToDo.dart';
+import 'package:its_time/screens/to_do_form.dart';
 
-class ToDoList extends StatelessWidget {
+class ToDoList extends StatefulWidget {
+  final int idTicket;
+
+  ToDoList(this.idTicket);
+
+  @override
+  _ToDoListState createState() => _ToDoListState();
+}
+
+class _ToDoListState extends State<ToDoList> {
   final List<ToDo> list = [];
+
+  final ToDoDao _toDoDao = ToDoDao();
 
   @override
   Widget build(BuildContext context) {
@@ -14,67 +27,80 @@ class ToDoList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          debugPrint("Clicou no botão");
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => ToDoForm(widget.idTicket),
+                ),
+              )
+              .then((value) => setState(() {}));
         },
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return ToDoWidget(list[index].conclusion, list[index].description);
+      body: FutureBuilder<List<ToDo>>(
+        initialData: List.empty(),
+        future: _toDoDao.findAllWithTicketId(widget.idTicket),
+        builder: (context, snapshot) {
+          List<ToDo> toDos = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.none &&
+              snapshot.hasData == null) {
+            print('project snapshot data is: ${snapshot.data}');
+            return Text('Erro desconhecido');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Carregando"),
+                ],
+              ),
+            );
+          }
+          return ListView.builder(
+            itemCount: snapshot.data.length,
+            itemBuilder: (BuildContext context, int index) {
+              ToDo toDo = toDos[index];
+              return Card(
+                key: Key(toDo.id.toString()),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Row>[
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          value: toDo.conclusion,
+                          onChanged: (newValue) {
+                            setState(() {
+                              toDo.conclusion = newValue;
+                            });
+                            _toDoDao.update(toDo);
+                          },
+                        ),
+                        Text(toDo.title),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            debugPrint("Botão edit apertado");
+                          },
+                          child: Icon(Icons.edit),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            debugPrint("Botão delete apertado");
+                          },
+                          child: Icon(Icons.delete),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
         },
-      ),
-    );
-  }
-}
-
-class ToDoWidget extends StatefulWidget {
-  bool isChecked;
-  final String description;
-
-  ToDoWidget(this.isChecked, this.description);
-
-  @override
-  _ToDoState createState() => _ToDoState();
-}
-
-class _ToDoState extends State<ToDoWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Row>[
-          Row(
-            children: <Widget>[
-              Checkbox(
-                value: widget.isChecked,
-                onChanged: (value) {
-                  setState(() {
-                    widget.isChecked = !widget.isChecked;
-                  });
-                },
-              ),
-              Text(widget.description),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  debugPrint("Botão edit apertado");
-                },
-                child: Icon(Icons.edit),
-              ),
-              TextButton(
-                onPressed: () {
-                  debugPrint("Botão delete apertado");
-                },
-                child: Icon(Icons.delete),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

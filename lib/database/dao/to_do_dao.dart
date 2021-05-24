@@ -7,25 +7,29 @@ class ToDoDao {
     final Database db = await getDatabase();
     final Map<String, dynamic> toDoMap = Map();
 
+    toDo.convertBooltoInt();
+
     toDoMap['title'] = toDo.title;
     toDoMap['description'] = toDo.description;
-    toDoMap['conclusion'] = toDo.conclusion;
-    toDoMap['alert'] = toDo.alert;
-    toDoMap['alett_date'] = toDo.alertDate;
+    toDoMap['conclusion'] = toDo.intConclusion;
+    toDoMap['alert'] = toDo.intAlert;
+    toDoMap['alert_date'] = toDo.alertDate;
     toDoMap['alert_time'] = toDo.alertTime;
-    toDoMap['previous'] = toDo.previous;
+    toDoMap['previous'] = toDo.intPrevious;
     toDoMap['previous_date'] = toDo.previousDate;
     toDoMap['previous_time'] = toDo.previousTime;
     toDoMap['repeat'] = toDo.repeat;
     toDoMap['repeat_weekly'] = toDo.repeatWeekly;
-    toDoMap['alarm'] = toDo.alarm;
+    toDoMap['alarm'] = toDo.intAlarm;
+    toDoMap['id_ticket'] = toDo.idTicket;
 
     return db.insert('todo', toDoMap);
   }
 
-  Future<List<ToDo>> findAll() async {
+  Future<List<ToDo>> findAllWithTicketId(int idTicket) async {
     final Database db = await getDatabase();
-    final List<Map<String, dynamic>> result = await db.query('todo');
+    final List<Map<String, dynamic>> result =
+        await db.query('todo', where: 'id_ticket = ?', whereArgs: [idTicket]);
     final List<ToDo> toDos = [];
 
     for (Map<String, dynamic> row in result) {
@@ -33,20 +37,32 @@ class ToDoDao {
         id: row['id'],
         title: row['title'],
         description: row['description'],
-        alert: row['alert'],
+        intConclusion: row['conclusion'],
+        intAlert: row['alert'],
         alertDate: row['alert_date'],
         alertTime: row['alert_time'],
-        previous: row['previous'],
+        intPrevious: row['previous'],
         previousDate: row['previous_date'],
         previousTime: row['previous_time'],
         repeat: row['repeat'],
         repeatWeekly: row['repeat_weekly'],
-        alarm: row['alarm'],
+        intAlarm: row['alarm'],
+        idTicket: row['id_ticket'],
       );
+
+      toDo.convertIntToBool();
 
       toDos.add(toDo);
     }
-
     return toDos;
+  }
+
+  Future<int> update(ToDo toDo) async {
+    toDo.convertBooltoInt();
+
+    final Database db = await getDatabase();
+
+    return await db.update('todo', {'conclusion': toDo.intConclusion},
+        where: 'id = ?', whereArgs: [toDo.id]);
   }
 }

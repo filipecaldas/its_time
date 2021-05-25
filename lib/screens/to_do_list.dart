@@ -99,7 +99,13 @@ class _ToDoListState extends State<ToDoList> {
               ),
               TextButton(
                 onPressed: () {
-                  debugPrint("Botão delete apertado");
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alert(context, 'Apagar',
+                          'Deseja apagar essa tarefa?', toDo);
+                    },
+                  );
                 },
                 child: Icon(Icons.delete),
               ),
@@ -107,6 +113,36 @@ class _ToDoListState extends State<ToDoList> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget cancelButton(BuildContext context) {
+    return TextButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget continueButton(BuildContext context, ToDo toDo) {
+    return TextButton(
+      child: Text("Continar"),
+      onPressed: () {
+        _toDoDao.delete(toDo.id).then((value) => setState(() {}));
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget alert(BuildContext context, String title, String content, ToDo toDo) {
+    return AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [
+        cancelButton(context),
+        continueButton(context, toDo),
+      ],
     );
   }
 }

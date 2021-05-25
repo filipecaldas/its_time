@@ -65,4 +65,10 @@ class ToDoDao {
     return await db.update('todo', {'conclusion': toDo.intConclusion},
         where: 'id = ?', whereArgs: [toDo.id]);
   }
+
+  Future<int> delete(int id) async {
+    final Database db = await getDatabase();
+
+    return await db.delete("todo", where: 'id = ?', whereArgs: [id]);
+  }
 }

@@ -5,8 +5,9 @@ import 'package:its_time/models/ToDo.dart';
 
 class ToDoForm extends StatefulWidget {
   final int idTicket;
+  final ToDo toDo;
 
-  ToDoForm(this.idTicket);
+  ToDoForm(this.idTicket, {this.toDo});
   @override
   _ToDoFormState createState() => _ToDoFormState();
 }
@@ -35,55 +36,40 @@ class _ToDoFormState extends State<ToDoForm> {
   String strDatePrevious = "";
   String strTimePrevious = "";
 
-  final TextEditingController _controllerTitle = TextEditingController();
-  final TextEditingController _controllerDescription = TextEditingController();
+  TextEditingController _controllerTitle = TextEditingController();
+  TextEditingController _controllerDescription = TextEditingController();
 
-  bool isSelectedWeekly(int value) {
-    if (value == 2) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  @override
+  void initState() {
+    super.initState();
 
-  String transformStrWeekly() {
-    String str = '';
-    if (isCheckedSunday) {
-      str += 'sun,';
-    } else {
-      str += ',';
+    if (widget.toDo != null) {
+      isSwitchedAlert = widget.toDo.alert;
+      isSwitchedPrevious = widget.toDo.previous;
+      isSwitchedRepeat = true;
+      isSwitchedAlarm = widget.toDo.alarm;
+
+      selectedRadio = widget.toDo.repeat;
+
+      List<String> list = widget.toDo.repeatWeekly.split(',');
+      list[0] != '' ? isCheckedSunday = true : isCheckedSunday = false;
+      list[1] != '' ? isCheckedMonday = true : isCheckedMonday = false;
+      list[2] != '' ? isCheckedTuesday = true : isCheckedTuesday = false;
+      list[3] != '' ? isCheckedWednesday = true : isCheckedWednesday = false;
+      list[4] != '' ? isCheckedThursday = true : isCheckedThursday = false;
+      list[5] != '' ? isCheckedFriday = true : isCheckedFriday = false;
+      list[6] != '' ? isCheckedSaturday = true : isCheckedSaturday = false;
+
+      strDateAlart = widget.toDo.alertDate;
+      strTimeAlart = widget.toDo.alertTime;
+
+      strDatePrevious = widget.toDo.previousDate;
+      strTimePrevious = widget.toDo.previousTime;
+
+      _controllerTitle = TextEditingController(text: widget.toDo.title);
+      _controllerDescription =
+          TextEditingController(text: widget.toDo.description);
     }
-    if (isCheckedMonday) {
-      str += 'mon,';
-    } else {
-      str += ',';
-    }
-    if (isCheckedTuesday) {
-      str += 'tue,';
-    } else {
-      str += ',';
-    }
-    if (isCheckedWednesday) {
-      str += 'wed,';
-    } else {
-      str += ',';
-    }
-    if (isCheckedThursday) {
-      str += 'thu,';
-    } else {
-      str += ',';
-    }
-    if (isCheckedFriday) {
-      str += 'fri,';
-    } else {
-      str += ',';
-    }
-    if (isCheckedSaturday) {
-      str += 'sat,';
-    } else {
-      str += ',';
-    }
-    return str;
   }
 
   @override
@@ -94,7 +80,11 @@ class _ToDoFormState extends State<ToDoForm> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          onCreateToDo();
+          if (widget.toDo != null) {
+            onUpdateToDo();
+          } else {
+            onCreateToDo();
+          }
         },
         child: const Icon(Icons.check),
       ),
@@ -518,5 +508,72 @@ class _ToDoFormState extends State<ToDoForm> {
         Text("Sábado")
       ],
     );
+  }
+
+  String transformStrWeekly() {
+    String str = '';
+    if (isCheckedSunday) {
+      str += 'sun,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedMonday) {
+      str += 'mon,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedTuesday) {
+      str += 'tue,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedWednesday) {
+      str += 'wed,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedThursday) {
+      str += 'thu,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedFriday) {
+      str += 'fri,';
+    } else {
+      str += ',';
+    }
+    if (isCheckedSaturday) {
+      str += 'sat,';
+    } else {
+      str += ',';
+    }
+    return str;
+  }
+
+  bool isSelectedWeekly(int value) {
+    if (value == 2) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  void onUpdateToDo() {
+    widget.toDo.title = _controllerTitle.text;
+    widget.toDo.description = _controllerDescription.text;
+
+    widget.toDo.alert = isSwitchedAlert;
+    widget.toDo.alertDate = strDateAlart;
+    widget.toDo.alertTime = strTimeAlart;
+    widget.toDo.previous = isSwitchedPrevious;
+    widget.toDo.previousDate = strDatePrevious;
+    widget.toDo.previousTime = strTimePrevious;
+    widget.toDo.repeat = selectedRadio;
+    widget.toDo.repeatWeekly = transformStrWeekly();
+    widget.toDo.alarm = isSwitchedAlarm;
+
+    _toDoDao.update(widget.toDo).then((id) => {
+          Navigator.pop(context),
+        });
   }
 }

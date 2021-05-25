@@ -66,6 +66,30 @@ class ToDoDao {
         where: 'id = ?', whereArgs: [toDo.id]);
   }
 
+  Future<int> update(ToDo toDo) async {
+    toDo.convertBooltoInt();
+
+    final Database db = await getDatabase();
+
+    return await db.update(
+        'todo',
+        {
+          'title': toDo.title,
+          'description': toDo.description,
+          'alert': toDo.intAlert,
+          'alert_date': toDo.alertDate,
+          'alert_time': toDo.alertTime,
+          'previous': toDo.intPrevious,
+          'previous_date': toDo.previousDate,
+          'previous_time': toDo.previousTime,
+          'repeat': toDo.repeat,
+          'repeat_weekly': toDo.repeatWeekly,
+          'alarm': toDo.intAlarm
+        },
+        where: 'id = ?',
+        whereArgs: [toDo.id]);
+  }
+
   Future<int> delete(int id) async {
     final Database db = await getDatabase();
 

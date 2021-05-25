@@ -93,7 +93,10 @@ class _ToDoListState extends State<ToDoList> {
             children: <Widget>[
               TextButton(
                 onPressed: () {
-                  debugPrint("Botão edit apertado");
+                  pushRoute(ToDoForm(
+                    widget.idTicket,
+                    toDo: toDo,
+                  ));
                 },
                 child: Icon(Icons.edit),
               ),

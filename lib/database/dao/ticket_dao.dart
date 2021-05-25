@@ -30,4 +30,11 @@ class TicketDao {
 
     return tickets;
   }
+
+  Future<int> delete(int id) async {
+    final Database db = await getDatabase();
+
+    await db.delete("todo", where: 'id_ticket = ?', whereArgs: [id]);
+    return await db.delete('ticket', where: 'id = ?', whereArgs: [id]);
+  }
 }

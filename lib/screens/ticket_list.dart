@@ -86,14 +86,49 @@ class _TicketListState extends State<TicketList> {
       color: colors[ticket.color],
       width: 32.0,
       height: 32.0,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(ticket.name),
-          ],
-        ),
+      child: Wrap(
+        runSpacing: 32.0,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              PopupMenuButton<String>(
+                icon: Icon(Icons.more_vert, size: 40.0),
+                onSelected: (String result) {
+                  if (result == 'delete') {
+                    _ticketDao
+                        .delete(ticket.id)
+                        .then((value) => setState(() {}));
+                  } else {
+                    print("Selecionou editar");
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: Icon(Icons.edit),
+                      title: Text('Editar'),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: Icon(Icons.delete),
+                      title: Text('Apagar'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Center(
+            child: Text(
+              ticket.name,
+              style: TextStyle(fontSize: 24.0),
+            ),
+          ),
+        ],
       ),
     );
   }

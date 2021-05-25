@@ -57,7 +57,7 @@ class ToDoDao {
     return toDos;
   }
 
-  Future<int> update(ToDo toDo) async {
+  Future<int> updateCheckConclusion(ToDo toDo) async {
     toDo.convertBooltoInt();
 
     final Database db = await getDatabase();

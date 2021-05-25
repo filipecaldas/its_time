@@ -83,7 +83,7 @@ class _ToDoListState extends State<ToDoList> {
                   setState(() {
                     toDo.conclusion = newValue;
                   });
-                  _toDoDao.update(toDo);
+                  _toDoDao.updateCheckConclusion(toDo);
                 },
               ),
               Text(toDo.title),

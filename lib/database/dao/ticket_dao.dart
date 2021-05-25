@@ -37,4 +37,12 @@ class TicketDao {
     await db.delete("todo", where: 'id_ticket = ?', whereArgs: [id]);
     return await db.delete('ticket', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<int> update(Ticket ticket) async {
+    final Database db = await getDatabase();
+
+    return await db.update(
+        'ticket', {'name': ticket.name, 'color': ticket.color},
+        where: 'id = ?', whereArgs: [ticket.id]);
+  }
 }

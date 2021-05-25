@@ -87,7 +87,7 @@ class _TicketListState extends State<TicketList> {
       width: 32.0,
       height: 32.0,
       child: Wrap(
-        runSpacing: 32.0,
+        runSpacing: 40.0,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -96,11 +96,15 @@ class _TicketListState extends State<TicketList> {
                 icon: Icon(Icons.more_vert, size: 40.0),
                 onSelected: (String result) {
                   if (result == 'delete') {
-                    _ticketDao
-                        .delete(ticket.id)
-                        .then((value) => setState(() {}));
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert(context, 'Apagar',
+                            'Deseja apagar essa etiqueta?', ticket);
+                      },
+                    );
                   } else {
-                    print("Selecionou editar");
+                    pushRoute(TicketForm(ticket: ticket));
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -130,6 +134,37 @@ class _TicketListState extends State<TicketList> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget cancelButton(BuildContext context) {
+    return TextButton(
+      child: Text("Cancelar"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget continueButton(BuildContext context, Ticket ticket) {
+    return TextButton(
+      child: Text("Continar"),
+      onPressed: () {
+        _ticketDao.delete(ticket.id).then((value) => setState(() {}));
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget alert(
+      BuildContext context, String title, String content, Ticket ticket) {
+    return AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [
+        cancelButton(context),
+        continueButton(context, ticket),
+      ],
     );
   }
 }

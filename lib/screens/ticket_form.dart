@@ -3,11 +3,15 @@ import 'package:its_time/database/dao/ticket_dao.dart';
 import 'package:its_time/models/Ticket.dart';
 
 class TicketForm extends StatefulWidget {
+  final Ticket ticket;
+  TicketForm({this.ticket});
+
   @override
   _TicketFormState createState() => _TicketFormState();
 }
 
 class _TicketFormState extends State<TicketForm> {
+  TextEditingController _controllerName;
   final List<Color> colors = [
     Colors.green,
     Colors.blue,
@@ -16,12 +20,21 @@ class _TicketFormState extends State<TicketForm> {
     Colors.brown,
     Colors.purple,
   ];
+  Color dropdownValue;
 
-  Color dropdownValue = Colors.green;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.ticket != null) {
+      _controllerName = TextEditingController(text: widget.ticket.name);
+      dropdownValue = colors[widget.ticket.color];
+    } else {
+      _controllerName = TextEditingController();
+      dropdownValue = Colors.green;
+    }
+  }
 
   final TicketDao _ticketDao = TicketDao();
-
-  final TextEditingController _controllerName = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +44,11 @@ class _TicketFormState extends State<TicketForm> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          onCreateTicket();
+          if (widget.ticket != null) {
+            onUpdateTicket();
+          } else {
+            onCreateTicket();
+          }
         },
         child: const Icon(Icons.check),
       ),
@@ -87,5 +104,17 @@ class _TicketFormState extends State<TicketForm> {
         selectColorButton(),
       ],
     );
+  }
+
+  void onUpdateTicket() {
+    widget.ticket.name = _controllerName.text;
+    widget.ticket.color = colors.indexOf(dropdownValue);
+    final Ticket updatedTicket = Ticket(
+        id: widget.ticket.id,
+        name: widget.ticket.name,
+        color: widget.ticket.color);
+    _ticketDao.update(updatedTicket).then((id) => {
+          Navigator.pop(context),
+        });
   }
 }
